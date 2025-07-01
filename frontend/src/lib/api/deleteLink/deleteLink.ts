@@ -1,8 +1,10 @@
 import { useFetch, type UseFetchReturnType } from '@/composables/useFetch.ts'
-import type { DeleteLinkRequest, DeleteLinkResponse } from '@/lib/api/deleteLink/deleteLink.type.ts'
+import type { DeleteLinkResponse } from '@/lib/api/deleteLink/deleteLink.type.ts'
 
-export const deleteLink = (request: DeleteLinkRequest): UseFetchReturnType<DeleteLinkResponse> => {
-  return useFetch<DeleteLinkResponse>(() => `/api/delete/${request.shortLink}`, {
+export const deleteLink = async (
+  shortUrl: string,
+): Promise<UseFetchReturnType<DeleteLinkResponse>> => {
+  return await useFetch<DeleteLinkResponse>(`/api/delete/${shortUrl}`, {
     method: 'DELETE',
   })
 }

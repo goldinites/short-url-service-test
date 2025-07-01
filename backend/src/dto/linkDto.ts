@@ -8,6 +8,10 @@ export interface CreateLinkDtoResponse {
   shortUrl: string
 }
 
+export interface GetLinkDtoRequest {
+  shortUrl: string;
+}
+
 export interface GetInfoLinkDtoResponse {
   originalUrl: string
   createdAt: Date;

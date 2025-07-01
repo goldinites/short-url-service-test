@@ -1,15 +1,16 @@
 <template>
-  <VForm :error="error" :pending="pending" @submit="handleSubmit">
+  <VForm :error="sendError" :pending="pending" @submit="handleSubmit">
     <template #fields>
       <VLabel>
-        <span>Short Url</span>
-        <VInput v-model="formData.shortLink" type="text" name="shortUrl" />
+        <span>Короткая ссылка</span>
+        <VInput v-model="shortUrl" type="text" name="shortUrl" />
       </VLabel>
     </template>
     <template #button>
-      <VButton type="submit">Get analytics about link</VButton>
+      <VButton type="submit">Получить аналитику переходов</VButton>
     </template>
   </VForm>
+  {{ analytics }}
 </template>
 
 <script setup lang="ts">
@@ -17,16 +18,24 @@ import VForm from '@/components/ui/VForm.vue'
 import VLabel from '@/components/ui/VLabel.vue'
 import VInput from '@/components/ui/VInput.vue'
 import VButton from '@/components/ui/VButton.vue'
-import { reactive } from 'vue'
-import ShortLinkApi from '@/lib/api/ShortLinkApi.ts'
+import { ref } from 'vue'
+import ShortUrlApi from '@/lib/api/ShortUrlApi.ts'
+import type { AnalyticsAboutLinkResponse } from '@/lib/api/analyticsAboutLink/analyticsAboutLink.type.ts'
 
-interface GetLinkInfoFormData {
-  shortLink: ''
+const shortUrl = ref<string>('')
+const analytics = ref<AnalyticsAboutLinkResponse | null>(null)
+const sendError = ref<string | null>(null)
+const pending = ref<boolean>(false)
+
+const handleSubmit = async () => {
+  pending.value = true
+  analytics.value = null
+  sendError.value = null
+
+  const { data, error } = await ShortUrlApi.analyticsAboutLink(shortUrl.value)
+
+  analytics.value = data
+  sendError.value = error
+  pending.value = false
 }
-
-const formData = reactive<GetLinkInfoFormData>({
-  shortLink: '',
-})
-
-const { data, pending, error, execute: handleSubmit } = ShortLinkApi.analyticsAboutLink(formData)
 </script>

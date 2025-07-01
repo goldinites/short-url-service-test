@@ -1,5 +1,5 @@
 export interface GetLinkInfoRequest {
-  shortLink: string
+  shortUrl: string
 }
 
 export interface GetLinkInfoResponse {

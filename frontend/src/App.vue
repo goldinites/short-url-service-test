@@ -13,7 +13,7 @@
         </VTab>
       </VTabs>
       <div class="tabs__content">
-        <CreateShortLink v-if="currentTab === TabKeys.Create" />
+        <CreateShortUrl v-if="currentTab === TabKeys.Create" />
         <GetLinkInfo v-if="currentTab === TabKeys.GetInfo" />
         <DeleteLink v-if="currentTab === TabKeys.Delete" />
         <AnalyticsAboutLink v-if="currentTab === TabKeys.Analytics" />
@@ -27,19 +27,17 @@ import VCard from '@/components/ui/VCard.vue'
 import VHeadline from '@/components/ui/VHeadline.vue'
 import VTabs from '@/components/ui/VTabs.vue'
 import VTab from '@/components/ui/VTab.vue'
-import CreateShortLink from '@/components/forms/CreateShortLink.vue'
+import CreateShortUrl from '@/components/forms/CreateShortUrl.vue'
 import GetLinkInfo from '@/components/forms/GetLinkInfo.vue'
 import DeleteLink from '@/components/forms/DeleteLink.vue'
 import AnalyticsAboutLink from '@/components/forms/AnalyticsAboutLink.vue'
-import { onBeforeMount, onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import shortLinkApi from '@/lib/api/ShortLinkApi.ts'
+import { ref } from 'vue'
 
 enum TabKeys {
-  Create = 'create-link',
-  GetInfo = 'get-link-info',
-  Delete = 'delete-link',
-  Analytics = 'analytics-link',
+  Create = 'create-url',
+  GetInfo = 'get-link-url',
+  Delete = 'delete-url',
+  Analytics = 'analytics-url',
 }
 
 interface Tab {
@@ -49,19 +47,19 @@ interface Tab {
 
 const tabs: Tab[] = [
   {
-    name: 'Create link',
+    name: 'Сгенерировать',
     key: TabKeys.Create,
   },
   {
-    name: 'Get link info',
+    name: 'Информация о ссылке',
     key: TabKeys.GetInfo,
   },
   {
-    name: 'Delete link',
+    name: 'Удалить ссылку',
     key: TabKeys.Delete,
   },
   {
-    name: 'Analytics about link',
+    name: 'Аналитика переходов',
     key: TabKeys.Analytics,
   },
 ]
@@ -75,6 +73,6 @@ const handleSetCurrentTab = (key: TabKeys) => {
 
 <style scoped>
 .tabs__content {
-  height: 360px;
+  height: 365px;
 }
 </style>

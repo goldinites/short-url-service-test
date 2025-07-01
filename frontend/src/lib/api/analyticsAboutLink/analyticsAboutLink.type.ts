@@ -1,5 +1,5 @@
 export interface AnalyticsAboutLinkRequest {
-  shortLink: string
+  shortUrl: string
 }
 
 export interface AnalyticsAboutLinkResponse {

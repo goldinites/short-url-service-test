@@ -1,5 +1,5 @@
 export interface DeleteLinkRequest {
-  shortLink: string
+  shortUrl: string
 }
 
 export interface DeleteLinkResponse {

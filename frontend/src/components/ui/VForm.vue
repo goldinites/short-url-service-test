@@ -11,11 +11,9 @@
 </template>
 
 <script setup lang="ts">
-import { FetchError } from 'ofetch'
-
 defineProps<{
   pending: boolean
-  error: FetchError<string> | null
+  error: string | null
 }>()
 </script>
 
