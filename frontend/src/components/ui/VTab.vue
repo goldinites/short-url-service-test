@@ -18,7 +18,7 @@ defineProps<{
   background: transparent;
   color: #3949ab;
   font-weight: 600;
-  font-size: 1.08rem;
+  font-size: 1rem;
   cursor: pointer;
   border: none;
   border-radius: 10px;

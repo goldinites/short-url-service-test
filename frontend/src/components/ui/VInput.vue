@@ -28,7 +28,5 @@ const model = defineModel()
 
 .v-input::placeholder {
   color: #b0b3b8;
-  font-size: 1rem;
-  opacity: 1;
 }
 </style>
