@@ -130,7 +130,6 @@ export const createShortLink = async (req: Request, res: Response) => {
       return;
     }
 
-    // Проверка на существование ссылки в БД
     const urlIsExist = await prisma.link.findFirst({ where: { originalUrl } });
     if (urlIsExist) {
       res.status(400).json({ message: 'Этот url уже используется' });
@@ -139,7 +138,6 @@ export const createShortLink = async (req: Request, res: Response) => {
 
     let shortUrl = alias || nanoid(8);
 
-    // Проверка на уникальность shortUrl
     const shortUrlExists = await prisma.link.findUnique({ where: { shortUrl } });
     if (shortUrlExists) {
       res.status(400).json({ message: 'Этот alias уже занят' });
@@ -175,14 +173,12 @@ export const deleteLink = async (req: Request, res: Response) => {
       return;
     }
 
-    // Сначала удаляем связанные клики
     await prisma.linkClick.deleteMany({
       where: {
         link: { shortUrl },
       },
     });
 
-    // Затем удаляем саму ссылку
     await prisma.link.delete({
       where: { shortUrl },
     });
