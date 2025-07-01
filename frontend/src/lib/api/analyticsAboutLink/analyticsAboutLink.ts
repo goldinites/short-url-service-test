@@ -1,13 +1,8 @@
 import { useFetch, type UseFetchReturnType } from '@/composables/useFetch.ts'
-import type {
-  AnalyticsAboutLinkRequest,
-  AnalyticsAboutLinkResponse,
-} from '@/lib/api/analyticsAboutLink/analyticsAboutLink.type.ts'
+import type { AnalyticsAboutLinkResponse } from '@/lib/api/analyticsAboutLink/analyticsAboutLink.type.ts'
 
-export const analyticsAboutLink = (
-  request: AnalyticsAboutLinkRequest,
-): UseFetchReturnType<AnalyticsAboutLinkResponse> => {
-  return useFetch<AnalyticsAboutLinkResponse>(() => `/api/analytics/${request.shortLink}`, {
+export const analyticsAboutLink = (): UseFetchReturnType<AnalyticsAboutLinkResponse> => {
+  return useFetch<AnalyticsAboutLinkResponse>('/api/analytics/', {
     method: 'GET',
   })
 }

@@ -2,11 +2,10 @@ import { Request, Response } from 'express';
 import { CreateLinkDtoRequest, CreateLinkDtoResponse, GetInfoLinkDtoResponse } from '../dto/linkDto';
 import { nanoid } from 'nanoid';
 import { links } from '../models/linkModel';
-import { linkClicks } from '../models/analyticsModel';
 import { AnalyticsDtoResponse } from '../dto/analyticsDto';
 
 export const redirectLink = (req: Request, res: Response) => {
-
+  console.log(req.params.shortUrl);
 }
 
 export const getLinkInfo = (req: Request, res: Response) => {
@@ -39,16 +38,16 @@ export const getLinkAnalytics = (req: Request, res: Response) => {
     res.status(400).json({ message: 'Не указан url' });
   }
 
-  const analytics = linkClicks.find((link) => link.link.shortUrl === shortUrl);
+  const link = links.find((link) => link.shortUrl === shortUrl);
 
-  if (!analytics) {
+  if (!link) {
     res.status(400).json({ message: 'Такой ссылки не существует' });
     return;
   }
 
   const response: AnalyticsDtoResponse = {
-    totalClicks: analytics.link.clicks.length,
-    recentClicks: analytics.link.clicks.slice(0, 5),
+    totalClicks: link.clicks.length,
+    recentClicks: link.clicks.slice(0, 5),
   }
 
   res.status(200).json(response);

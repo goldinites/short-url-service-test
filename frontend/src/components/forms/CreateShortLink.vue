@@ -1,5 +1,5 @@
 <template>
-  <VForm :error="error" :pending="pending" @submit="handleSubmit">
+  <VForm :error="error" :pending="pending" @submit="handleSubmit()">
     <template #fields>
       <VLabel>
         <span>Original Url</span>
@@ -7,7 +7,7 @@
       </VLabel>
       <VLabel>
         <span>Lifespan (in days)</span>
-        <VInput v-model="formData.expiresAt" type="text" name="expiresAt" />
+        <VDatePicker v-model="formData.expiresAt" :min-date="MinDate" :max-date="MaxDate" />
       </VLabel>
       <VLabel>
         <span>Alias</span>
@@ -18,6 +18,7 @@
       <VButton type="submit">Create short link</VButton>
     </template>
   </VForm>
+  {{ data }}
 </template>
 
 <script setup lang="ts">
@@ -27,17 +28,22 @@ import VInput from '@/components/ui/VInput.vue'
 import VButton from '@/components/ui/VButton.vue'
 import { reactive } from 'vue'
 import ShortLinkApi from '@/lib/api/ShortLinkApi.ts'
+import VDatePicker from '@/components/ui/VDatePicker.vue'
+import { DAY, MONTH } from '@/lib/constants.ts'
 
 interface CreateShortLinkFormData {
   originalUrl: string
-  expiresAt: Date
-  alias: string
+  expiresAt?: Date
+  alias?: string
 }
+
+const MinDate = new Date(Date.now() + DAY)
+const MaxDate = new Date(Date.now() + DAY + MONTH)
 
 const formData = reactive<CreateShortLinkFormData>({
   originalUrl: '',
-  expiresAt: new Date(),
-  alias: '',
+  expiresAt: undefined,
+  alias: undefined,
 })
 
 const { data, pending, error, execute: handleSubmit } = ShortLinkApi.createShortLink(formData)

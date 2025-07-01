@@ -31,8 +31,8 @@ import CreateShortLink from '@/components/forms/CreateShortLink.vue'
 import GetLinkInfo from '@/components/forms/GetLinkInfo.vue'
 import DeleteLink from '@/components/forms/DeleteLink.vue'
 import AnalyticsAboutLink from '@/components/forms/AnalyticsAboutLink.vue'
-import { onBeforeMount, onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import shortLinkApi from '@/lib/api/ShortLinkApi.ts'
 
 enum TabKeys {
@@ -68,9 +68,19 @@ const tabs: Tab[] = [
 
 const currentTab = ref<TabKeys>(tabs[0].key)
 
+const router = useRouter()
+
 const handleSetCurrentTab = (key: TabKeys) => {
   currentTab.value = key
 }
+
+const { execute } = shortLinkApi.redirectShortUrl()
+
+router.beforeEach((to) => {
+  if (to.path !== '/') {
+    execute(to.path)
+  }
+})
 </script>
 
 <style scoped>

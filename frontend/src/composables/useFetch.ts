@@ -1,4 +1,4 @@
-import { readonly, ref, type Ref, unref } from 'vue'
+import { readonly, ref, type Ref } from 'vue'
 import { $fetch, type FetchError, type FetchOptions } from 'ofetch'
 
 export interface UseFetchReturnType<T> {
@@ -41,13 +41,13 @@ export const useFetch = <T>(
   const pending = ref(false)
   const statusCode = ref<number | null>(null)
 
-  const execute = async () => {
+  const execute = async (dynamicUrl?: string) => {
     try {
       pending.value = true
       error.value = null
 
       const requestUrl = typeof url === 'function' ? url() : url
-      data.value = await $fetch<T>(requestUrl, options)
+      data.value = await $fetch<T>(requestUrl + dynamicUrl, options)
 
       statusCode.value = 200
     } catch (err) {
