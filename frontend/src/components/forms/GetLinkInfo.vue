@@ -12,7 +12,7 @@
   </VForm>
   <div v-if="data">
     <div>Оригинальный URL: {{ data.originalUrl }}</div>
-    <div>Дата создания: {{ data.createdAt }}</div>
+    <div>Дата создания: {{ dateFormatter(data.createdAt) }}</div>
     <div>Количество переходов: {{ data.clickCount }}</div>
   </div>
 </template>
@@ -24,6 +24,7 @@ import VInput from '@/components/ui/VInput.vue'
 import VButton from '@/components/ui/VButton.vue'
 import { ref } from 'vue'
 import ShortLinkApi from '@/lib/api/ShortLinkApi.ts'
+import { dateFormatter } from '@/utils/dateFormatter.ts'
 
 const shortLink = ref<string>('')
 

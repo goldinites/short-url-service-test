@@ -15,9 +15,9 @@
     <div>
       <template v-if="data.recentClicks.length">
         Последние переходы:
-        <ul>
+        <ul class="recent-clicks">
           <li v-for="(click, index) in data.recentClicks" :key="index">
-            IP: {{ click.ipAddress }}, Дата: {{ click.clickedAt }}
+            IP: {{ click.ipAddress }}, Дата: {{ dateFormatter(click.clickedAt) }}
           </li>
         </ul>
       </template>
@@ -33,6 +33,7 @@ import VInput from '@/components/ui/VInput.vue'
 import VButton from '@/components/ui/VButton.vue'
 import { ref } from 'vue'
 import ShortLinkApi from '@/lib/api/ShortLinkApi.ts'
+import { dateFormatter } from '@/utils/dateFormatter.ts'
 
 const shortLink = ref<string>('')
 
@@ -44,3 +45,16 @@ const handleSubmit = () => {
   }
 }
 </script>
+
+<style scoped>
+.recent-clicks {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  & li {
+    list-style: none;
+  }
+}
+</style>
