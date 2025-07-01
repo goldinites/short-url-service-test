@@ -26,8 +26,10 @@ const shortLink = ref<string>('')
 const { data, pending, error, execute } = ShortLinkApi.deleteLink()
 
 const handleSubmit = () => {
-  if (shortLink.value) {
-    execute(shortLink.value)
+  const result = shortLink.value.replace(window.location.origin, '')
+
+  if (result) {
+    execute(result)
   }
 }
 </script>

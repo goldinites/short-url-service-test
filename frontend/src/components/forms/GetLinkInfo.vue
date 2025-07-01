@@ -31,8 +31,10 @@ const shortLink = ref<string>('')
 const { data, pending, error, execute } = ShortLinkApi.getLinkInfo()
 
 const handleSubmit = () => {
-  if (shortLink.value) {
-    execute(shortLink.value)
+  const result = shortLink.value.replace(window.location.origin, '')
+
+  if (result) {
+    execute(result)
   }
 }
 </script>

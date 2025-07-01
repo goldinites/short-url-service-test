@@ -20,9 +20,10 @@
     </template>
   </VForm>
 
-  <div v-if="data?.shortUrl" class="result-block">
+  <div v-if="createdUrl" class="result-block">
     <span>Короткая ссылка: </span>
-    <a :href="data.shortUrl" target="_blank">{{ data.shortUrl }}</a>
+    <a :href="createdUrl" target="_blank">{{ createdUrl }}</a>
+    <VCopyButton :text="createdUrl" title="Скопировать ссылку" />
   </div>
 </template>
 
@@ -31,11 +32,12 @@ import VForm from '@/components/ui/VForm.vue'
 import VLabel from '@/components/ui/VLabel.vue'
 import VInput from '@/components/ui/VInput.vue'
 import VButton from '@/components/ui/VButton.vue'
-import { onMounted, reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import ShortLinkApi from '@/lib/api/ShortLinkApi.ts'
 import VDatePicker from '@/components/ui/VDatePicker.vue'
 import { DAY, MONTH } from '@/lib/constants.ts'
 import VErrorText from '@/components/ui/VErrorText.vue'
+import VCopyButton from '@/components/ui/VCopyButton.vue'
 
 interface CreateShortLinkFormData {
   originalUrl: string
@@ -56,6 +58,14 @@ const isOriginalUrlInvalid = ref<boolean>(false)
 
 const { data, pending, error, execute } = ShortLinkApi.createShortLink(formData)
 
+const createdUrl = computed(() => {
+  if (!data.value) {
+    return ''
+  }
+
+  return `${window.location.origin}/${data.value.shortUrl}`
+})
+
 const handleSubmit = () => {
   isOriginalUrlInvalid.value = false
   if (!formData.originalUrl || !URL.canParse(formData.originalUrl)) {
@@ -66,3 +76,22 @@ const handleSubmit = () => {
   execute()
 }
 </script>
+
+<style>
+.result-block a {
+  font-weight: 500;
+}
+.copy-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 8px;
+  vertical-align: middle;
+  padding: 0;
+}
+.copied-msg {
+  color: #4caf50;
+  margin-left: 8px;
+  font-size: 0.95em;
+}
+</style>
