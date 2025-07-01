@@ -9,7 +9,8 @@ services:
       - DATABASE_URL=mysql://root:root@db:3306/short_url_service
       - FRONTEND_URL=http://frontend:80
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   frontend:
     build: ./frontend
@@ -28,7 +29,7 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
       timeout: 5s
       retries: 10
