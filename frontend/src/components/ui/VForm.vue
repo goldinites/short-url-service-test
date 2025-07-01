@@ -5,13 +5,14 @@
     </div>
     <slot name="button" />
     <slot v-if="error" name="error">
-      <span class="v-form__error">{{ error }}</span>
+      <VErrorText>{{ error }}</VErrorText>
     </slot>
   </form>
 </template>
 
 <script setup lang="ts">
 import { FetchError } from 'ofetch'
+import VErrorText from '@/components/ui/VErrorText.vue'
 
 defineProps<{
   pending: boolean
@@ -27,6 +28,7 @@ const onSubmit = (event: Event) => {
 
 <style scoped>
 .v-form {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -43,10 +45,6 @@ const onSubmit = (event: Event) => {
     flex-direction: column;
     gap: 18px;
     flex: 1;
-  }
-
-  & .v-form__error {
-    color: #7a0000;
   }
 }
 </style>

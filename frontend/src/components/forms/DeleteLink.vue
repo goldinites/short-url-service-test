@@ -2,15 +2,15 @@
   <VForm :error="error" :pending="pending" @submit="handleSubmit">
     <template #fields>
       <VLabel>
-        <span>Short Url</span>
+        <span>Короткая ссылка</span>
         <VInput v-model="shortLink" type="text" name="shortUrl" />
       </VLabel>
     </template>
     <template #button>
-      <VButton type="submit">Delete link</VButton>
+      <VButton type="submit">Удалить ссылку</VButton>
     </template>
   </VForm>
-  {{ data }}
+  <div v-if="data?.success">Ссылка успешно удалена!</div>
 </template>
 
 <script setup lang="ts">

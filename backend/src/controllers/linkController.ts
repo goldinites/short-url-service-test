@@ -140,7 +140,7 @@ export const createShortLink = async (req: Request, res: Response) => {
       data: {
         originalUrl,
         shortUrl,
-        expiresAt: new Date(expiresAt),
+        expiresAt,
         createdAt: new Date(),
       },
     });

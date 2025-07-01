@@ -2,15 +2,25 @@
   <VForm :error="error" :pending="pending" @submit="handleSubmit">
     <template #fields>
       <VLabel>
-        <span>Short Url</span>
+        <span>Короткая ссылка</span>
         <VInput v-model="shortLink" type="text" name="shortUrl" />
       </VLabel>
     </template>
     <template #button>
-      <VButton type="submit">Get analytics about link</VButton>
+      <VButton type="submit">Получить аналитику по url</VButton>
     </template>
   </VForm>
-  {{ data }}
+  <div v-if="data">
+    <div>Всего переходов: {{ data.totalClicks }}</div>
+    <div>
+      Последние переходы:
+      <ul>
+        <li v-for="(click, index) in data.recentClicks" :key="index">
+          IP: {{ click.ipAddress }}, Дата: {{ click.clickedAt }}
+        </li>
+      </ul>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">

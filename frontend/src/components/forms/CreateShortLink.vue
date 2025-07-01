@@ -1,30 +1,28 @@
 <template>
-  <div>
-    <VForm :error="error" :pending="pending" @submit="handleSubmit">
-      <template #fields>
-        <VLabel>
-          <span>Оригинальный URL</span>
-          <VInput v-model="formData.originalUrl" type="text" name="originalUrl" />
-          <span v-if="isOriginalUrlInvalid">URL адрес недействителен</span>
-        </VLabel>
-        <VLabel>
-          <span>Срок действия</span>
-          <VDatePicker v-model="formData.expiresAt" :min-date="MinDate" :max-date="MaxDate" />
-        </VLabel>
-        <VLabel>
-          <span>Псевдоним</span>
-          <VInput v-model="formData.alias" type="text" name="alias" maxLength="30" />
-        </VLabel>
-      </template>
-      <template #button>
-        <VButton type="submit">Сгенерировать короткую ссылку</VButton>
-      </template>
-    </VForm>
+  <VForm :error="error" :pending="pending" @submit="handleSubmit">
+    <template #fields>
+      <VLabel>
+        <span>Оригинальный URL</span>
+        <VInput v-model="formData.originalUrl" type="text" name="originalUrl" />
+        <VErrorText v-if="isOriginalUrlInvalid">URL адрес недействителен</VErrorText>
+      </VLabel>
+      <VLabel>
+        <span>Срок действия</span>
+        <VDatePicker v-model="formData.expiresAt" :min-date="MinDate" :max-date="MaxDate" />
+      </VLabel>
+      <VLabel>
+        <span>Псевдоним</span>
+        <VInput v-model="formData.alias" type="text" name="alias" maxLength="30" />
+      </VLabel>
+    </template>
+    <template #button>
+      <VButton type="submit">Сгенерировать короткую ссылку</VButton>
+    </template>
+  </VForm>
 
-    <div v-if="data && data.shortUrl" class="result-block">
-      <span>Короткая ссылка: </span>
-      <a :href="data.shortUrl" target="_blank">{{ data.shortUrl }}</a>
-    </div>
+  <div v-if="data?.shortUrl" class="result-block">
+    <span>Короткая ссылка: </span>
+    <a :href="data.shortUrl" target="_blank">{{ data.shortUrl }}</a>
   </div>
 </template>
 
@@ -37,6 +35,7 @@ import { onMounted, reactive, ref } from 'vue'
 import ShortLinkApi from '@/lib/api/ShortLinkApi.ts'
 import VDatePicker from '@/components/ui/VDatePicker.vue'
 import { DAY, MONTH } from '@/lib/constants.ts'
+import VErrorText from '@/components/ui/VErrorText.vue'
 
 interface CreateShortLinkFormData {
   originalUrl: string
@@ -66,8 +65,4 @@ const handleSubmit = () => {
 
   execute()
 }
-
-onMounted(() => {
-  console.log(123)
-})
 </script>

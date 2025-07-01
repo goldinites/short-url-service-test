@@ -12,6 +12,7 @@
           {{ tab.name }}
         </VTab>
       </VTabs>
+
       <div class="tabs__content">
         <CreateShortLink v-if="currentTab === TabKeys.Create" />
         <GetLinkInfo v-if="currentTab === TabKeys.GetInfo" />
@@ -91,6 +92,9 @@ watch(data, (url) => {
 
 <style scoped>
 .tabs__content {
-  height: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-height: 370px;
 }
 </style>

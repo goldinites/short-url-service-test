@@ -2,15 +2,19 @@
   <VForm :error="error" :pending="pending" @submit="handleSubmit">
     <template #fields>
       <VLabel>
-        <span>Short Url</span>
+        <span>Короткая ссылка</span>
         <VInput v-model="shortLink" type="text" name="shortUrl" />
       </VLabel>
     </template>
     <template #button>
-      <VButton type="submit">Get link info</VButton>
+      <VButton type="submit">Получить информацию о ссылке</VButton>
     </template>
   </VForm>
-  {{ data }}
+  <div v-if="data">
+    <div>Оригинальный URL: {{ data.originalUrl }}</div>
+    <div>Дата создания: {{ data.createdAt }}</div>
+    <div>Количество переходов: {{ data.clickCount }}</div>
+  </div>
 </template>
 
 <script setup lang="ts">

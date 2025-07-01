@@ -5,5 +5,5 @@ export interface CreateShortLinkRequest {
 }
 
 export interface CreateShortLinkResponse {
-  shortLink: string
+  shortUrl: string
 }
