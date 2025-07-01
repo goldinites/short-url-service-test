@@ -31,7 +31,7 @@ import CreateShortLink from '@/components/forms/CreateShortLink.vue'
 import GetLinkInfo from '@/components/forms/GetLinkInfo.vue'
 import DeleteLink from '@/components/forms/DeleteLink.vue'
 import AnalyticsAboutLink from '@/components/forms/AnalyticsAboutLink.vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import shortLinkApi from '@/lib/api/ShortLinkApi.ts'
 
@@ -49,19 +49,19 @@ interface Tab {
 
 const tabs: Tab[] = [
   {
-    name: 'Create link',
+    name: 'Создать ссылку',
     key: TabKeys.Create,
   },
   {
-    name: 'Get link info',
+    name: 'Информация о ссылке',
     key: TabKeys.GetInfo,
   },
   {
-    name: 'Delete link',
+    name: 'Удалить ссылку',
     key: TabKeys.Delete,
   },
   {
-    name: 'Analytics about link',
+    name: 'Аналитика о ссылке',
     key: TabKeys.Analytics,
   },
 ]
@@ -74,11 +74,17 @@ const handleSetCurrentTab = (key: TabKeys) => {
   currentTab.value = key
 }
 
-const { execute } = shortLinkApi.redirectShortUrl()
+const { data, execute } = shortLinkApi.redirectShortUrl()
 
 router.beforeEach((to) => {
   if (to.path !== '/') {
-    execute(to.path)
+    execute(to.path.slice(1, to.path.length))
+  }
+})
+
+watch(data, (url) => {
+  if (typeof url === 'string') {
+    window.location.href = url
   }
 })
 </script>

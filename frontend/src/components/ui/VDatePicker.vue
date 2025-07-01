@@ -16,8 +16,9 @@
 <script setup lang="ts">
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import type { ModelValue } from '@vuepic/vue-datepicker'
 
-const model = defineModel()
+const model = defineModel<ModelValue>()
 
 defineProps<{
   minDate?: string | Date

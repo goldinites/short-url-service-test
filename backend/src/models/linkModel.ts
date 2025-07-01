@@ -8,5 +8,3 @@ export interface Link {
   createdAt: Date;
   clicks: LinkClick[];
 }
-
-export const links: Link[] = [];

@@ -1,7 +1,7 @@
-import { useFetch } from '@/composables/useFetch.ts'
+import { useFetch, type UseFetchReturnType } from '@/composables/useFetch.ts'
 
-export const redirectShortUrl = () => {
-  return useFetch('/api', {
+export const redirectShortUrl = (): UseFetchReturnType<string> => {
+  return useFetch<string>('/api', {
     method: 'GET',
   })
 }

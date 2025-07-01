@@ -1,110 +1,187 @@
 import { Request, Response } from 'express';
 import { CreateLinkDtoRequest, CreateLinkDtoResponse, GetInfoLinkDtoResponse } from '../dto/linkDto';
 import { nanoid } from 'nanoid';
-import { links } from '../models/linkModel';
 import { AnalyticsDtoResponse } from '../dto/analyticsDto';
+import prisma from '../prisma';
 
-export const redirectLink = (req: Request, res: Response) => {
-  console.log(req.params.shortUrl);
-}
+export const redirectLink = async (req: Request, res: Response) => {
+  try {
+    const shortUrl = req.params.shortUrl;
+    
+    if (!shortUrl) {
+      res.status(400).json({ message: 'Не указан url' });
+      return;
+    }
 
-export const getLinkInfo = (req: Request, res: Response) => {
-  const shortUrl = req.params.shortUrl;
+    const link = await prisma.link.findUnique({
+      where: { shortUrl },
+      include: { clicks: true },
+    });
 
-  if (!shortUrl) {
-    res.status(400).json({ message: 'Не указан url' });
+    if (!link) {
+      res.status(404).json({ message: 'Ссылка не найдена' });
+      return;
+    }
+
+    if (link.expiresAt && new Date() > link.expiresAt) {
+      res.status(410).json({ message: 'Ссылка истекла' });
+      return;
+    }
+
+    await prisma.linkClick.create({
+      data: {
+        ipAddress: req.ip || 'unknown ip',
+        linkId: link.id,
+      },
+    });
+
+    res.status(200).json(link.originalUrl);
+  } catch (error) {
+    console.error('Error in redirectLink:', error);
+    res.status(500).json({ message: 'Ошибка при обработке ссылки' });
   }
-
-  const link = links.find((link) => link.shortUrl === shortUrl);
-
-  if (!link) {
-    res.status(400).json({ message: 'Такой ссылки не существует' });
-    return;
-  }
-
-  const response: GetInfoLinkDtoResponse =  {
-    originalUrl: link.originalUrl,
-    createdAt: link.createdAt,
-    clickCount: link.clicks.length
-  }
-
-  res.status(200).json(response);
 };
 
-export const getLinkAnalytics = (req: Request, res: Response) => {
-  const shortUrl = req.params.shortUrl;
+export const getLinkInfo = async (req: Request, res: Response) => {
+  try {
+    const shortUrl = req.params.shortUrl;
 
-  if (!shortUrl) {
-    res.status(400).json({ message: 'Не указан url' });
+    if (!shortUrl) {
+      res.status(400).json({ message: 'Не указан url' });
+      return;
+    }
+
+    const link = await prisma.link.findUnique({
+      where: { shortUrl },
+      include: { clicks: true },
+    });
+
+    if (!link) {
+      res.status(400).json({ message: 'Такой ссылки не существует' });
+      return;
+    }
+
+    const response: GetInfoLinkDtoResponse = {
+      originalUrl: link.originalUrl,
+      createdAt: link.createdAt,
+      clickCount: link.clicks.length,
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error('Error in getLinkInfo:', error);
+    res.status(500).json({ message: 'Ошибка при получении информации о ссылке' });
   }
-
-  const link = links.find((link) => link.shortUrl === shortUrl);
-
-  if (!link) {
-    res.status(400).json({ message: 'Такой ссылки не существует' });
-    return;
-  }
-
-  const response: AnalyticsDtoResponse = {
-    totalClicks: link.clicks.length,
-    recentClicks: link.clicks.slice(0, 5),
-  }
-
-  res.status(200).json(response);
 };
 
-export const createShortLink = (req: Request, res: Response) => {
-  const body: CreateLinkDtoRequest = req.body
-  const { originalUrl, expiresAt, alias } = body;
+export const getLinkAnalytics = async (req: Request, res: Response) => {
+  try {
+    const shortUrl = req.params.shortUrl;
 
-  if (!originalUrl) {
-    res.status(400).json({ message: 'Не указан оригинальный url' });
-    return;
+    if (!shortUrl) {
+      res.status(400).json({ message: 'Не указан url' });
+      return;
+    }
+
+    const link = await prisma.link.findUnique({
+      where: { shortUrl },
+      include: { 
+        clicks: {
+          orderBy: { clickedAt: 'desc' },
+          take: 5,
+        },
+      },
+    });
+
+    if (!link) {
+      res.status(400).json({ message: 'Такой ссылки не существует' });
+      return;
+    }
+
+    const response: AnalyticsDtoResponse = {
+      totalClicks: link.clicks.length,
+      recentClicks: link.clicks,
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error('Error in getLinkAnalytics:', error);
+    res.status(500).json({ message: 'Ошибка при получении аналитики' });
   }
-
-  const urlIsExist = links.some((link) => link.originalUrl === originalUrl);
-
-  if (urlIsExist) {
-    res.status(400).json({ message: 'Этот url уже используется' });
-    return;
-  }
-
-  let shortUrl = alias || nanoid(8);
-
-  links.push({
-    id: links.length + 1,
-    originalUrl,
-    shortUrl,
-    expiresAt,
-    createdAt: new Date(),
-    clicks: []
-  })
-
-  const response: CreateLinkDtoResponse = {
-    shortUrl,
-  }
-
-  res.status(200).json(response)
 };
 
-export const deleteLink = (req: Request, res: Response) => {
-  const shortUrl = req.params.shortUrl;
+export const createShortLink = async (req: Request, res: Response) => {
+  try {
+    const body: CreateLinkDtoRequest = req.body
+    const { originalUrl, expiresAt, alias } = body;
 
-  if (!shortUrl) {
-    res.status(400).json({ message: 'Не указан url' });
-    return;
+    if (!originalUrl) {
+      res.status(400).json({ message: 'Не указан оригинальный url' });
+      return;
+    }
+
+    // Проверка на существование ссылки в БД
+    const urlIsExist = await prisma.link.findFirst({ where: { originalUrl } });
+    if (urlIsExist) {
+      res.status(400).json({ message: 'Этот url уже используется' });
+      return;
+    }
+
+    let shortUrl = alias || nanoid(8);
+
+    // Проверка на уникальность shortUrl
+    const shortUrlExists = await prisma.link.findUnique({ where: { shortUrl } });
+    if (shortUrlExists) {
+      res.status(400).json({ message: 'Этот alias уже занят' });
+      return;
+    }
+
+    const newLink = await prisma.link.create({
+      data: {
+        originalUrl,
+        shortUrl,
+        expiresAt: new Date(expiresAt),
+        createdAt: new Date(),
+      },
+    });
+
+    const response: CreateLinkDtoResponse = {
+      shortUrl: newLink.shortUrl,
+    }
+
+    res.status(200).json(response)
+  } catch (error) {
+    console.error('Error in createShortLink:', error);
+    res.status(500).json({ message: 'Ошибка при создании ссылки' });
   }
+};
 
-  const idx = links.findIndex((link) => link.shortUrl === shortUrl);
+export const deleteLink = async (req: Request, res: Response) => {
+  try {
+    const shortUrl = req.params.shortUrl;
 
-  if (!idx) {
+    if (!shortUrl) {
+      res.status(400).json({ message: 'Не указан url' });
+      return;
+    }
+
+    // Сначала удаляем связанные клики
+    await prisma.linkClick.deleteMany({
+      where: {
+        link: { shortUrl },
+      },
+    });
+
+    // Затем удаляем саму ссылку
+    await prisma.link.delete({
+      where: { shortUrl },
+    });
+
+    res.status(200).json({
+      success: true,
+    });
+  } catch (error) {
+    console.error('Error in deleteLink:', error);
     res.status(400).json({ message: 'Такой ссылки не существует' });
-    return;
   }
-
-  links.splice(idx, 1);
-
-  res.status(200).json({
-    success: true,
-  })
 }; 

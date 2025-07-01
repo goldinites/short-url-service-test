@@ -1,5 +1,5 @@
 <template>
-  <form class="v-form" :class="{ pending }" @submit.prevent="$emit('submit')">
+  <form class="v-form" :class="{ pending }" @submit="onSubmit">
     <div class="v-form__fields">
       <slot name="fields" />
     </div>
@@ -17,6 +17,12 @@ defineProps<{
   pending: boolean
   error: FetchError<string> | null
 }>()
+
+const emit = defineEmits(['submit'])
+const onSubmit = (event: Event) => {
+  event.preventDefault()
+  emit('submit', event)
+}
 </script>
 
 <style scoped>

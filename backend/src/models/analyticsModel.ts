@@ -6,5 +6,3 @@ export interface LinkClick {
   clickedAt: Date;
   link: Link;
 }
-
-export const linkClicks: LinkClick[] = []

@@ -46,8 +46,10 @@ export const useFetch = <T>(
       pending.value = true
       error.value = null
 
-      const requestUrl = typeof url === 'function' ? url() : url
-      data.value = await $fetch<T>(requestUrl + dynamicUrl, options)
+      let requestUrl = typeof url === 'function' ? url() : url
+      requestUrl = dynamicUrl ? `${requestUrl}/${dynamicUrl}` : requestUrl
+
+      data.value = await $fetch<T>(requestUrl, options)
 
       statusCode.value = 200
     } catch (err) {
