@@ -44,6 +44,7 @@ export const useFetch = <T>(
   const execute = async (dynamicUrl?: string) => {
     try {
       pending.value = true
+      data.value = null
       error.value = null
 
       let requestUrl = typeof url === 'function' ? url() : url

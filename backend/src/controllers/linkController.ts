@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { CreateLinkDtoRequest, CreateLinkDtoResponse, GetInfoLinkDtoResponse } from '../dto/linkDto';
+import { CreateLinkDtoRequest, CreateLinkDtoResponse, createLinkSchema, GetInfoLinkDtoResponse } from '../dto/linkDto'
 import { nanoid } from 'nanoid';
 import { AnalyticsDtoResponse } from '../dto/analyticsDto';
 import prisma from '../prisma';
@@ -35,7 +35,7 @@ export const redirectLink = async (req: Request, res: Response) => {
       },
     });
 
-    res.status(200).json(link.originalUrl);
+    return res.redirect(link.originalUrl);
   } catch (error) {
     console.error('Error in redirectLink:', error);
     res.status(500).json({ message: 'Ошибка при обработке ссылки' });
@@ -112,6 +112,16 @@ export const getLinkAnalytics = async (req: Request, res: Response) => {
 
 export const createShortLink = async (req: Request, res: Response) => {
   try {
+    const result = createLinkSchema.safeParse({
+      ...req.body,
+      expiresAt: req.body.expiresAt && new Date(req.body.expiresAt)
+    });
+
+    if (!result.success) {
+      res.status(400).json({ error: 'Произошла ошибка при обработке данных' });
+      return
+    }
+
     const body: CreateLinkDtoRequest = req.body
     const { originalUrl, expiresAt, alias } = body;
 

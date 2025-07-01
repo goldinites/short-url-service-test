@@ -13,12 +13,15 @@
   <div v-if="data">
     <div>Всего переходов: {{ data.totalClicks }}</div>
     <div>
-      Последние переходы:
-      <ul>
-        <li v-for="(click, index) in data.recentClicks" :key="index">
-          IP: {{ click.ipAddress }}, Дата: {{ click.clickedAt }}
-        </li>
-      </ul>
+      <template v-if="data.recentClicks.length">
+        Последние переходы:
+        <ul>
+          <li v-for="(click, index) in data.recentClicks" :key="index">
+            IP: {{ click.ipAddress }}, Дата: {{ click.clickedAt }}
+          </li>
+        </ul>
+      </template>
+      <span v-else>По этой ссылке было переходов</span>
     </div>
   </div>
 </template>
@@ -36,6 +39,8 @@ const shortLink = ref<string>('')
 const { data, pending, error, execute } = ShortLinkApi.analyticsAboutLink()
 
 const handleSubmit = () => {
-  execute(shortLink.value)
+  if (shortLink.value) {
+    execute(shortLink.value)
+  }
 }
 </script>

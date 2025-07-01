@@ -26,6 +26,8 @@ const shortLink = ref<string>('')
 const { data, pending, error, execute } = ShortLinkApi.deleteLink()
 
 const handleSubmit = () => {
-  execute(shortLink.value)
+  if (shortLink.value) {
+    execute(shortLink.value)
+  }
 }
 </script>

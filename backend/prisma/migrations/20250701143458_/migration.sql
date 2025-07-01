@@ -3,7 +3,7 @@ CREATE TABLE `Link` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `shortUrl` VARCHAR(191) NOT NULL,
     `originalUrl` VARCHAR(191) NOT NULL,
-    `expiresAt` DATETIME(3) NOT NULL,
+    `expiresAt` DATETIME(3) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `Link_shortUrl_key`(`shortUrl`),
